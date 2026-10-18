@@ -61,3 +61,12 @@ See the element-by-element results in `design-qa.md`. The browser verified searc
 Metadata, canonical URLs, crawlable HTML/pagination, language collections, truthful structured data and sitemap are present and checked. Fonts are self-hosted and unnecessary app frameworks are absent. The Cloudflare migration moves robots.txt to the host root and changes all SEO URLs to the Cloudflare origin. No Search Console account was accessed and search indexing/ranking is not guaranteed.
 
 Public issue content and source availability can change. Discovery coverage is bounded and GitHub remains authoritative. Browser checks do not prove every external project is healthy, every contributor setup works, or every assistive-technology/device combination has been tested.
+
+## Cloudflare migration verification, 18 October 2026
+
+- Cloudflare Pages project `firstpatch` serves `https://firstpatch.pages.dev/` from the public GitHub repository. The Cloudflare build runs the same five tests, build and SEO checks before publishing `dist/`.
+- Production HTTP checks passed for the issue directory, Python collection, projects, sources, guide, about, JSON data and PNG mark. Canonicals use the new host; no old GitHub Pages origin remains in these HTML pages.
+- The host-root robots.txt returns 200, permits crawling and declares the Cloudflare sitemap. The first Cloudflare deployment contains 90 indexable sitemap URLs. An unknown URL returns HTTP 404 and `noindex,follow`.
+- Browser verification confirmed the old GitHub Pages link redirects with its `unassigned` query preserved. On Cloudflare, Python plus unassigned filtering yielded 89 issues, loading more rendered 60 matching rows, and clearing filters restored the full feed. No application console errors were observed.
+- GitHub Actions manual data refresh passed and committed its new snapshot. Automatic Cloudflare build triggering is being checked separately from the successful first deployment.
+- The old GitHub Pages deployment contains only canonical redirect documents. GitHub cannot supply a custom HTTP 301 here; the browser redirect preserves path, query and fragment.
