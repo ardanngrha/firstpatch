@@ -81,5 +81,4 @@ Interaction evidence: selecting Newest issues updates the URL to `?sort=created`
 
 final result: passed
 
-Earlier full-site verification follows below.
-
+Earlier full-site verification is recorded above.

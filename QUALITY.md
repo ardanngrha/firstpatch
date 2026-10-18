@@ -58,7 +58,7 @@ See the element-by-element results in `design-qa.md`. The browser verified searc
 
 ## SEO and limitations
 
-Metadata, canonical URLs, crawlable HTML/pagination, language collections, truthful structured data and sitemap are present and checked. Fonts are self-hosted and unnecessary app frameworks are absent. The Cloudflare migration moves robots.txt to the host root and changes all SEO URLs to the Cloudflare origin. No Search Console account was accessed and search indexing/ranking is not guaranteed.
+Metadata, canonical URLs, crawlable HTML/pagination, language collections, truthful structured data and sitemap are present and checked. Fonts are self-hosted and unnecessary app frameworks are absent. The Cloudflare migration moves robots.txt to the host root and changes all SEO URLs to the Cloudflare origin. The later Search Console setup verified property ownership and submitted the sitemap; the bounded processing result is recorded in `docs/seo-status.md`. Search indexing/ranking is not guaranteed.
 
 Public issue content and source availability can change. Discovery coverage is bounded and GitHub remains authoritative. Browser checks do not prove every external project is healthy, every contributor setup works, or every assistive-technology/device combination has been tested.
 

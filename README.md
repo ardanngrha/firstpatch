@@ -66,7 +66,9 @@ The old GitHub Pages address serves only small redirect documents. Existing path
 
 Issue/project lists and pagination are real HTML, not an empty app shell. Language collection pages have individual titles, descriptions, H1s and canonicals. `WebSite`, `CollectionPage`, `ItemList` and breadcrumb JSON-LD describe only visible content. There are no invented reviews or ratings. Search-query combinations canonicalize to their collection page rather than creating unlimited indexable URLs. The 404 page is `noindex`; the root `404.html` lets Cloudflare Pages return an actual 404 instead of an app-shell fallback.
 
-`/sitemap.xml` contains all indexable pages using the Cloudflare origin. `/robots.txt` is now at the **host root**, allows crawling and declares that sitemap. Open Graph and Twitter images are served from the same origin. Search Console verification, sitemap submission and search ranking are not claimed by this repository.
+`/sitemap.xml` contains all indexable pages using the Cloudflare origin. `/robots.txt` is now at the **host root**, allows crawling and declares that sitemap. Open Graph and Twitter images are served from the same origin.
+
+The URL-prefix property `https://firstpatch.pages.dev/` was verified in Google Search Console on 18 October 2026 using `public/googleadbd9664c8414571.html`. Keep this file deployed to retain ownership verification. The sitemap submission was accepted, but the Sitemaps report initially displayed "Couldn't fetch". Google's separate live URL test successfully fetched the sitemap and reported "URL is available to Google". A successful live test does not establish successful sitemap processing or indexing. See `docs/seo-status.md` for the recorded result; no search rank or indexing success is claimed.
 
 ## Contribute
 
