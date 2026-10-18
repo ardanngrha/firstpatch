@@ -1,0 +1,23 @@
+{
+  "name": "firstpatch",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A thoughtful starting place for your first open-source contribution.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "sync": "node scripts/sync.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "@fontsource/source-code-pro": "5.3.1",
+    "@fontsource/source-sans-3": "5.3.1",
+    "@phosphor-icons/core": "2.1.1",
+    "json5": "2.2.3"
+  }
+}
