@@ -16,7 +16,7 @@ FirstPatch combines public open-source project directories and recently updated 
 - Pre-rendered HTML, crawlable pagination and language pages, canonical URLs, JSON-LD, metadata and a sitemap.
 - No visitor accounts, analytics, third-party font requests or API tokens in the browser.
 
-The [Sources page](https://firstpatch.pages.dev/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 10 languages, extra batches of First Contributions projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
+The [Sources page](https://firstpatch.pages.dev/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 11 languages, including Dart for Flutter projects, extra batches of First Contributions and directory-listed Dart/Flutter projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
 
 ## Run locally
 

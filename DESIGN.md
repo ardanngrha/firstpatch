@@ -19,6 +19,7 @@ An approachable contribution directory for first-time open-source contributors. 
 - Expand details in place: preserve search context while reading the contribution requirements.
 - Source and checked time stay visible: an imported issue is a snapshot, not a live promise.
 - Theme choice supports different reading environments; both themes use the same hierarchy and behavior.
+- Filled action labels retain the contrasting canvas color inside prose, so article link styling cannot hide the primary action in either theme.
 - Motion is limited to state feedback, with reduced-motion support.
 
 ## Production adaptations
