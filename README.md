@@ -52,9 +52,11 @@ If a catalogue fails, its previous successful records are retained and marked. I
 
 ## Cloudflare Pages
 
-The Cloudflare Pages project `firstpatch` connects directly to `ardanngrha/firstpatch`, production branch `main`. Every production commit runs `npm test && npm run build && npm run check` with Node 24, then publishes `dist/`. No Cloudflare deploy token is stored in the repository. Visitor analytics are disabled.
+The Cloudflare Pages project `firstpatch` connects to `ardanngrha/firstpatch`, production branch `main`. Its build command is `npm test && npm run build && npm run check` with Node 24 and output directory `dist/`. No Cloudflare deploy token is stored in the repository. Visitor analytics are disabled.
 
 The `Refresh data and check site` GitHub workflow checks pushes and refreshes public data on manual runs and a daily schedule at **09:37 Asia/Jakarta** (GitHub schedules can run late). It uses the repository-scoped GitHub token only in CI. A refreshed snapshot passes tests, build and link/SEO checks before being committed to `main`; Cloudflare's Git integration deploys that commit. Source failures retain the last successful data and report degradation.
+
+Migration status on 18 October 2026: production deployment and the manual data-refresh workflow passed. Git-triggered Cloudflare builds did not start after the tested commits despite automatic production deployments being enabled. Current production was deployed explicitly from `main`; repairing the Git trigger remains pending. Daily refresh commits alone must not be treated as proof that new data has reached production.
 
 `scripts/config.mjs` defines the canonical origin. Set `SITE_URL=https://your-domain.example` when deploying a fork or custom domain; assets, data fallback, canonicals, structured data and sitemap use the same value. Production currently uses `https://firstpatch.pages.dev` at the host root.
 
