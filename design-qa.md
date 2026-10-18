@@ -65,3 +65,21 @@ Opened the primary source and implementation images together, then examined the 
 - [x] Exercise core controls, native keyboard disclosure, both themes and failure recovery.
 - [x] Verify static HTML content and pagination without JavaScript.
 - [x] Preserve explicit source coverage and no fabricated issue guidance.
+# Sort-control follow-up, 18 October 2026
+
+Source visual truth: `/var/folders/91/ydbfm_zd79q4bshmnvsw14k40000gn/T/codex-clipboard-70b73dcf-2754-413d-9f47-f5d135604dd9.png`. This is the reported defect, so the goal is to correct the cramped caret while retaining the established design.
+
+Comparison evidence: `../outputs/sort-comparison.png` puts the user source, captured production control, fixed light control and fixed dark control together. The 518 x 170 source is normalized to 259 x 85 for comparison. Browser crops are CSS-normalized, approximately 240 x 68, from a 1280 x 850 viewport; runtime DPR was 2. The source has a different surrounding crop, so frame margins are not compared as design differences.
+
+Finding and iteration: [P2] The native caret sits against the select border in the reported and production captures. Replaced its appearance with the existing licensed Phosphor caret, inset 12px; reserved 40px right padding for text. The select remains a native select. A forced-colors fallback restores its system appearance. Revised light/dark captures show a visible gap around the caret and no clipped text.
+
+Required fidelity surfaces: Source Sans typography, sizes, weights and selected copy are retained; only caret spacing and native intrinsic width change. Existing ivory/green tokens and dark tokens remain. The caret is the existing library SVG, colored through a mask to remain legible in both themes. No new illustration or image substitution was introduced.
+
+Responsive evidence: `../outputs/sort-mobile-dark.png` at 320 x 760 and `../outputs/sort-mobile-light.png` at 390 x 844. Desktop 1280 x 850, mobile 320 and 390 all report no horizontal overflow. At 320, the select remains 142 x 44px, with its 12px caret inset and full selected label visible. Full mobile captures confirm surrounding header, filters and list hierarchy remain intact. The focused control comparison is necessary because the reported problem is too small in a full-page capture.
+
+Interaction evidence: selecting Newest issues updates the URL to `?sort=created`; restoring Recently updated clears it. Native focus remains on the select with a solid visible outline. Light/dark toggles work. No application console errors were observed. Browser automation did not establish a keyboard-only value change, so no such result is claimed.
+
+final result: passed
+
+Earlier full-site verification follows below.
+

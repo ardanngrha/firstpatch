@@ -9,7 +9,7 @@ await rm(output,{recursive:true,force:true});
 async function walk(dir){for(const entry of await readdir(dir,{withFileTypes:true})){
   const file=path.join(dir,entry.name);
   if(entry.isDirectory()){await walk(file);continue;}
-  if(!entry.name.endsWith('.html'))continue;
+  if(!entry.name.endsWith('.html')||/^google[a-f0-9]+\.html$/.test(entry.name))continue;
   const relative=path.relative(input,file);
   const html=await readFile(file,'utf8');
   const target=html.match(/rel="canonical" href="([^"]+)"/)[1];

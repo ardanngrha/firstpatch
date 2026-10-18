@@ -1,7 +1,7 @@
 import {readdir,readFile,stat} from 'node:fs/promises';
 import path from 'node:path';
 import {site,base} from './config.mjs';
-const root=path.resolve('dist');const htmlFiles=[];async function walk(dir){for(const f of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,f.name);if(f.isDirectory())await walk(p);else if(f.name.endsWith('.html'))htmlFiles.push(p);}}await walk(root);
+const root=path.resolve('dist');const htmlFiles=[];async function walk(dir){for(const f of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,f.name);if(f.isDirectory())await walk(p);else if(f.name.endsWith('.html')){if(dir===root&&/^google[a-f0-9]+\.html$/.test(f.name)){if((await readFile(p,'utf8')).trim()!==`google-site-verification: ${f.name}`)throw new Error('Invalid Google ownership verification file');}else htmlFiles.push(p);}}}await walk(root);
 const errors=[];const canonicalSet=new Set();let links=0;
 for(const file of htmlFiles){const html=await readFile(file,'utf8');const relative=path.relative(root,file);const fail=m=>errors.push(`${relative}: ${m}`);
   if((html.match(/<h1[ >]/g)||[]).length!==1)fail('Expected exactly one H1');

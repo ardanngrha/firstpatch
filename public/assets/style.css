@@ -31,3 +31,9 @@
 @media(max-width:360px){.sort-control select{width:142px;font-size:12px}.results-heading{gap:8px}.results-heading h2{font-size:25px}}
 html:not(.enhanced) .toolbar,html:not(.enhanced) .sort-control,html:not(.enhanced) .source-filter label,html:not(.enhanced) .project-toolbar{display:none}
 @media(max-width:360px){.site-header nav{gap:12px}.site-header nav>a{font-size:13px}.brand span{font-size:27px}.theme-button{width:40px;min-width:40px}}
+
+/* Keep the native select interaction, with a consistently inset library icon. */
+.sort-control{position:relative;flex-shrink:0}
+.sort-control select{appearance:none;-webkit-appearance:none;padding-right:40px}
+.sort-control::after{content:"";position:absolute;right:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--ink);mask:url("icons/caret-down.svg") center/contain no-repeat;pointer-events:none}
+@media(forced-colors:active){.sort-control select{appearance:auto;-webkit-appearance:auto;padding-right:10px}.sort-control::after{display:none}}
