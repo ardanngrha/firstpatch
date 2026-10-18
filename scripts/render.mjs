@@ -1,7 +1,6 @@
 import {escapeHtml as e,safeUrl,sourceDefinitions,languageSlug} from './lib.mjs';
-export const site='https://ardanngrha.github.io/firstpatch';
-export const base='/firstpatch';
-export const href=path=>`${base}${path}`;
+import {site,base,href} from './config.mjs';
+export {site,base,href};
 const sourceName=id=>sourceDefinitions.find(s=>s.id===id)?.name||id;
 const icon=(name,cls='')=>`<img class="icon ${cls}" src="${href(`/assets/icons/${name}.svg`)}" width="20" height="20" alt="" aria-hidden="true">`;
 const date=s=>s?new Intl.DateTimeFormat('en',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(s)):'Not checked';

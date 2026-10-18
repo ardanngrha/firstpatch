@@ -1,6 +1,7 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 import JSON5 from 'json5';
+import {site} from './config.mjs';
 import {sourceDefinitions,mergeProject,repositoryFromUrl,textExcerpt,issueType,directoryRepoRefs} from './lib.mjs';
 
 const root=new URL('../',import.meta.url);const now=new Date().toISOString();
@@ -9,7 +10,7 @@ let old=await readFile(new URL('data/catalog.json',root),'utf8').then(JSON.parse
 const agent='FirstPatch/1.0 (+https://github.com/ardanngrha/firstpatch)';
 async function download(url){const r=await fetch(url,{headers:{'User-Agent':agent},signal:AbortSignal.timeout(30000)});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.text();}
 if(process.env.USE_PUBLISHED_FALLBACK==='true'){
-  try{const origin='https://ardanngrha.github.io/firstpatch/data/';const projects=JSON.parse(await download(origin+'projects.json'));const feed=JSON.parse(await download(origin+'issues.json'));const status=JSON.parse(await download(origin+'status.json'));if(Array.isArray(projects.items)&&Array.isArray(feed.items)&&feed.items.length)old={...old,projects:projects.items,issues:feed.items,sources:status.sources,issueCheckedAt:feed.checkedAt};}catch{console.log('Published fallback unavailable; using the committed snapshot if needed.');}
+  try{const origin=site+'/data/';const projects=JSON.parse(await download(origin+'projects.json'));const feed=JSON.parse(await download(origin+'issues.json'));const status=JSON.parse(await download(origin+'status.json'));if(Array.isArray(projects.items)&&Array.isArray(feed.items)&&feed.items.length)old={...old,projects:projects.items,issues:feed.items,sources:status.sources,issueCheckedAt:feed.checkedAt};}catch{console.log('Published fallback unavailable; using the committed snapshot if needed.');}
 }
 async function ingest(id,load){const count=records.size;try{const result=await load();reports.push({id,status:'ok',checkedAt:now,...result});console.log(`${id}: imported (${records.size-count} new records)`);}catch(error){
   const retained=(old?.projects||[]).filter(p=>p.sources.includes(id));for(const p of retained)mergeProject(records,{...p,sources:[id]});

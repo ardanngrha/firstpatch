@@ -1,0 +1,86 @@
+name: Refresh data and check site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '37 2 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firstpatch-refresh
+  cancel-in-progress: false
+
+jobs:
+  check-and-refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Refresh public sources and verify issues
+        if: github.event_name != 'push'
+        id: refresh
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          USE_PUBLISHED_FALLBACK: 'true'
+        run: npm run sync
+      - name: Report refresh degradation
+        if: steps.refresh.outcome == 'failure'
+        run: echo '::warning::One or more sources failed. Retained snapshots are recorded in data/catalog.json.'
+      - run: npm test
+      - run: npm run build
+      - run: npm run check
+      - name: Publish checked snapshot to the Git-connected Cloudflare project
+        if: github.event_name != 'push'
+        run: |
+          if ! git diff --quiet -- data/catalog.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add data/catalog.json
+            git commit -m 'Refresh public contribution snapshot'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+  legacy-links:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: node scripts/legacy-redirects.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: legacy-dist
+
+  deploy-legacy-links:
+    needs: legacy-links
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Preserve old GitHub Pages links
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,7 +2,7 @@
 
 Find a small issue in a project you care about.
 
-**[Open FirstPatch](https://ardanngrha.github.io/firstpatch/)**
+**[Open FirstPatch](https://firstpatch.pages.dev/)**
 
 FirstPatch combines public open-source project directories and recently updated GitHub issues. Search by project or topic, filter by language, contribution type, discovery source and assignment, then read the issue context and project contribution guide in place.
 
@@ -16,7 +16,7 @@ FirstPatch combines public open-source project directories and recently updated 
 - Pre-rendered HTML, crawlable pagination and language pages, canonical URLs, JSON-LD, metadata and a sitemap.
 - No visitor accounts, analytics, third-party font requests or API tokens in the browser.
 
-The [Sources page](https://ardanngrha.github.io/firstpatch/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 10 languages, extra batches of First Contributions projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
+The [Sources page](https://firstpatch.pages.dev/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 10 languages, extra batches of First Contributions projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
 
 ## Run locally
 
@@ -27,7 +27,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:4173/firstpatch/`. To use a different port: `npm run dev -- --port 4180`. Re-run the build after editing source files; the preview serves `dist/`.
+Open `http://127.0.0.1:4173/`. To use a different port: `npm run dev -- --port 4180`. Re-run the build after editing source files; the preview serves `dist/`.
 
 ```sh
 npm test
@@ -35,7 +35,7 @@ npm run build
 npm run check
 ```
 
-The build emits a self-contained static site in `dist/`. The frontend uses native HTML and a small progressive-enhancement script. The content, native issue disclosures and pagination remain usable without JavaScript. This production static architecture is intentional for GitHub Pages and SEO.
+The build emits a self-contained static site in `dist/`. The frontend uses native HTML and a small progressive-enhancement script. The content, native issue disclosures and pagination remain usable without JavaScript. Cloudflare Pages serves the production application.
 
 ## Refresh the public data
 
@@ -50,17 +50,21 @@ npm run build
 
 If a catalogue fails, its previous successful records are retained and marked. If all issue checks fail, the previous issue snapshot retains its original checked time. Partial refreshes are marked in `/data/status.json`. Scheduled deployment loads the currently published snapshot as the fallback before trying a refresh. If the first-ever issue import has no valid snapshot, sync fails instead of inventing or silently publishing issue data.
 
-## GitHub Pages
+## Cloudflare Pages
 
-The `Refresh data and deploy Pages` workflow builds on a push to `main`, a manual run, and a daily schedule at **09:37 Asia/Jakarta** (GitHub schedules can run late). It uses the repository-scoped GitHub token only in CI. Refresh degradation is recorded as a workflow warning and in the public status data. A successful build, tests and internal-link/SEO checks are required before deployment.
+The Cloudflare Pages project `firstpatch` connects directly to `ardanngrha/firstpatch`, production branch `main`. Every production commit runs `npm test && npm run build && npm run check` with Node 24, then publishes `dist/`. No Cloudflare deploy token is stored in the repository. Visitor analytics are disabled.
 
-Configure the repository's Pages source as **GitHub Actions**. The workflow uploads `dist/` and deploys using the official Pages actions. The project path and canonical origin are defined in `scripts/render.mjs`; change both if you fork or use a custom domain.
+The `Refresh data and check site` GitHub workflow checks pushes and refreshes public data on manual runs and a daily schedule at **09:37 Asia/Jakarta** (GitHub schedules can run late). It uses the repository-scoped GitHub token only in CI. A refreshed snapshot passes tests, build and link/SEO checks before being committed to `main`; Cloudflare's Git integration deploys that commit. Source failures retain the last successful data and report degradation.
+
+`scripts/config.mjs` defines the canonical origin. Set `SITE_URL=https://your-domain.example` when deploying a fork or custom domain; assets, data fallback, canonicals, structured data and sitemap use the same value. Production currently uses `https://firstpatch.pages.dev` at the host root.
+
+The old GitHub Pages address serves only small redirect documents. Existing paths, query filters and fragments are preserved in browsers with JavaScript; HTML fallbacks link and redirect to the equivalent canonical page. GitHub project hosting cannot supply custom HTTP 301 redirects, so no 301 status is claimed.
 
 ## SEO
 
-Issue/project lists and pagination are real HTML, not an empty app shell. Language collection pages have individual titles, descriptions, H1s and canonicals. `WebSite`, `CollectionPage`, `ItemList` and breadcrumb JSON-LD describe only visible content. There are no invented reviews or ratings. Search-query combinations canonicalize to their collection page rather than creating unlimited indexable URLs. The 404 page is `noindex` and GitHub Pages supplies its 404 status.
+Issue/project lists and pagination are real HTML, not an empty app shell. Language collection pages have individual titles, descriptions, H1s and canonicals. `WebSite`, `CollectionPage`, `ItemList` and breadcrumb JSON-LD describe only visible content. There are no invented reviews or ratings. Search-query combinations canonicalize to their collection page rather than creating unlimited indexable URLs. The 404 page is `noindex`; the root `404.html` lets Cloudflare Pages return an actual 404 instead of an app-shell fallback.
 
-`/sitemap.xml` contains all indexable pages. The project also emits `robots.txt`, but crawlers only consult a file at the **host root**. A project under `/firstpatch/` cannot control `https://ardanngrha.github.io/robots.txt`; it does not pretend otherwise. For stronger site-level control, use a custom domain or configure the owner site's root separately. Search Console verification, sitemap submission and search ranking are not claimed by this repository.
+`/sitemap.xml` contains all indexable pages using the Cloudflare origin. `/robots.txt` is now at the **host root**, allows crawling and declares that sitemap. Open Graph and Twitter images are served from the same origin. Search Console verification, sitemap submission and search ranking are not claimed by this repository.
 
 ## Contribute
 
