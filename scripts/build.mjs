@@ -1,4 +1,5 @@
 import {readFile,writeFile,mkdir,cp,rm,copyFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
 import {issuePage,projectsPage,prosePage,sourcesPage,document,site,href} from './render.mjs';
 import {languageSlug,escapeHtml} from './lib.mjs';
 const root=new URL('../',import.meta.url),out=new URL('dist/',root);
@@ -23,6 +24,7 @@ await save('/404.html',document({title:'Page not found | FirstPatch',description
 await mkdir(new URL('data/',out),{recursive:true});
 for(const [name,items] of [['issues',catalog.issues],['projects',catalog.projects]])await writeFile(new URL(`data/${name}.json`,out),JSON.stringify({generatedAt:catalog.generatedAt,checkedAt:catalog.issueCheckedAt,items})+'\n');
 await writeFile(new URL('data/status.json',out),JSON.stringify({generatedAt:catalog.generatedAt,sources:catalog.sources,scope:catalog.scope},null,2)+'\n');
+await writeFile(new URL('build-meta.json',out),JSON.stringify({revision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),generatedAt:catalog.generatedAt})+'\n');
 await writeFile(new URL('sitemap.xml',out),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(path=>`<url><loc>${escapeHtml(site+path)}</loc></url>`).join('')}</urlset>`);
 await writeFile(new URL('robots.txt',out),`User-agent: *\nAllow: /\nSitemap: ${site}/sitemap.xml\n`);
 await writeFile(new URL('.nojekyll',out),'');

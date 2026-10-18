@@ -12,7 +12,8 @@
     "sync": "node scripts/sync.mjs",
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "@fontsource/source-code-pro": "5.3.1",

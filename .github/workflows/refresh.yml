@@ -17,7 +17,7 @@ concurrency:
 jobs:
   check-and-refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
@@ -41,7 +41,7 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run check
-      - name: Publish checked snapshot to the Git-connected Cloudflare project
+      - name: Commit the checked snapshot
         if: github.event_name != 'push'
         run: |
           if ! git diff --quiet -- data/catalog.json; then
@@ -49,9 +49,12 @@ jobs:
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add data/catalog.json
             git commit -m 'Refresh public contribution snapshot'
-            git pull --rebase origin main
             git push origin HEAD:main
           fi
+      - name: Deploy Cloudflare Pages and verify production
+        env:
+          CLOUDFLARE_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: npm run deploy
 
   legacy-links:
     if: github.event_name == 'push'
