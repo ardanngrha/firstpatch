@@ -1,39 +1,110 @@
-(() => {
-  const $ = selector => document.querySelector(selector);
-  const esc = (v = '') => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const url = value => {try {const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:'';} catch{return '';}};
-  const themeButton = $('.theme-button');
-  const setTheme = dark => {document.documentElement.dataset.theme=dark?'dark':'light';themeButton.setAttribute('aria-label',`Switch to ${dark?'light':'dark'} theme`);themeButton.title=`Switch to ${dark?'light':'dark'} theme`;themeButton.querySelector('img').src=themeButton.querySelector('img').src.replace(/(moon|sun)\.svg/,`${dark?'sun':'moon'}.svg`);};
-  setTheme(document.documentElement.dataset.theme==='dark');themeButton.hidden=false;
-  themeButton.addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';setTheme(dark);try{localStorage.setItem('firstpatch-theme',dark?'dark':'light');}catch{}});
-  const pageNode=$('#page-data');if(!pageNode)return;
-  let page;try{page=JSON.parse(pageNode.textContent);}catch{return;}
-  const names={'good-first-issue':'Good First Issue','first-contributions':'First Contributions','up-for-grabs':'Up For Grabs','codetriage':'CodeTriage','goodfirstissue-org':'GoodFirstIssue.org','first-timers-only':'First Timers Only','github':'GitHub'};
-  const ico = (name,cls='')=>`<img class="icon ${cls}" src="${page.base}/assets/icons/${name}.svg" width="20" height="20" alt="" aria-hidden="true">`;
-  const format = s=>new Intl.DateTimeFormat('en',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(s));
-  const time = s=>`<time datetime="${esc(s)}" title="${esc(s)}">${format(s)}</time>`;
-  let all=page.initial,limit=page.size,offset=0,loaded=false,loading=false;
-  const isIssues=page.kind==='issues';const form=$(isIssues?'#issue-filters':'#project-filters');
+import {issueMarkup,projectMarkup,filterIssues,filterProjects,sortIssues,filterKeys,repoFilterKeys,advancedKeys} from './issues.mjs';
+
+const $=selector=>document.querySelector(selector);
+const themeButton=$('.theme-button');
+function setTheme(dark){
+  document.documentElement.dataset.theme=dark?'dark':'light';
+  themeButton.setAttribute('aria-label',`Switch to ${dark?'light':'dark'} theme`);
+  themeButton.title=`Switch to ${dark?'light':'dark'} theme`;
+  const img=themeButton.querySelector('img');img.src=img.src.replace(/(moon|sun)\.svg/,`${dark?'sun':'moon'}.svg`);
+}
+setTheme(document.documentElement.dataset.theme==='dark');themeButton.hidden=false;
+themeButton.addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';setTheme(dark);try{localStorage.setItem('firstpatch-theme',dark?'dark':'light');}catch{}});
+
+const pageNode=$('#page-data');
+if(pageNode){
+  const page=JSON.parse(pageNode.textContent);
+  const isIssues=page.kind==='issues';
+  const form=$(isIssues?'#issue-filters':'#project-filters');
   const input=form.elements.q;
-  let timer;
   const status=$(isIssues?'#filter-status':'#project-status');
-  const state=()=>Object.fromEntries(new FormData(form));
-  const updateUrl=values=>{const params=new URLSearchParams();for(const [k,v] of Object.entries(values))if(v&&!(k==='sort'&&v==='updated'))params.set(k,v);const qs=params.toString();history.replaceState(null,'',`${location.pathname}${qs?'?'+qs:''}`);};
-  const restore=()=>{const params=new URLSearchParams(location.search);for(const name of ['q','language','type','unassigned','sort','source']){const field=form.elements[name];if(!field)continue;const value=params.get(name);if(field.type==='checkbox')field.checked=value==='on';else if(value!==null)field.value=value;else field.value=name==='language'?(page.language||''):name==='sort'?'updated':'';}};
-  function issue(i,openIds){const sources=i.sources.filter(s=>s!=='github'&&s!=='first-timers-only');const source=sources.length?sources.map(s=>names[s]||s).join(', '):'GitHub label search';return `<details class="issue" data-id="${esc(i.id)}" ${openIds.has(i.id)?'open':''}><summary><div class="repo-cell">${ico('github-logo','repo-icon')}<div><span class="repo-name">${esc(i.repo.replace('/',' / '))}</span><span class="repo-language">${esc(i.language)}<span class="assignment">${i.assignees?'Assigned':'Unassigned'}</span></span></div></div><div class="issue-cell"><h2>${esc(i.title)}</h2><p>${esc(i.repoDescription||i.excerpt||'Read the issue and contribution guidelines on GitHub.')}</p><div class="labels">${i.labels.filter(l=>l.length<35).slice(0,3).map(l=>`<span>${esc(l)}</span>`).join('')}</div></div><div class="source-cell"><span class="checked">Checked ${time(i.checkedAt)}</span><span title="${esc(source)}">${esc(source)}</span><span class="updated">Updated ${time(i.updatedAt)}</span></div>${ico('caret-down','disclosure')}</summary><div class="issue-detail"><section><h3>What to know</h3><p>${esc(i.excerpt||i.repoDescription||'The maintainer has not added a description. Read the issue discussion for context.')}</p><a class="text-link" href="${url(i.url)}">Read the full issue discussion ${ico('arrow-up-right')}</a></section><section><h3>Before you start</h3><ul><li>${i.assignees?'This issue has an assignee. Check with the maintainer before starting.':'No assignee at the last check. Read the comments for work already in progress.'}</li><li><a href="${url(i.contributingUrl)}">Read the project’s contribution guide</a></li><li>Follow its setup, testing and AI-use instructions.</li></ul></section><a class="button primary" href="${url(i.url)}">${ico('github-logo')}View on GitHub ${ico('arrow-up-right')}</a></div></details>`;}
-  function project(p){return `<article class="project"><div>${ico('folder-simple')}<div><h2><a href="${url(p.url)}">${esc(p.repo||p.name)}</a></h2><p>${esc(p.description||'Open-source project listed by the credited directory. Read its README to learn what it does.')}</p><div class="project-meta">${p.language?`<span>${esc(p.language)}</span>`:''}<span>${p.sources.map(s=>esc(names[s]||s)).join(' · ')}</span></div></div></div><a class="text-link" href="${url(p.issueUrl)||(p.repo?url(p.url)+'/contribute':url(p.url))}">${p.repo?'Find contribution tasks':'Visit project'} ${ico('arrow-up-right')}</a></article>`;}
-  function render({writeUrl=true}={}){const values=state();const q=(values.q||'').trim().toLowerCase();let found=all.filter(item=>{const searchable=isIssues?[item.title,item.repo,item.repoDescription,item.excerpt,...item.labels].join(' '):[item.name,item.repo,item.description,...item.tags].join(' ');return (!q||searchable.toLowerCase().includes(q))&&(!values.source||item.sources.includes(values.source))&&(!isIssues||(!values.language||item.language===values.language)&&(!values.type||item.type===values.type)&&(!values.unassigned||item.assignees===0));});
-    if(isIssues){found.sort((a,b)=>values.sort==='comments'?a.comments-b.comments||b.updatedAt.localeCompare(a.updatedAt):values.sort==='created'?b.createdAt.localeCompare(a.createdAt):b.updatedAt.localeCompare(a.updatedAt));const openIds=new Set([...document.querySelectorAll('.issue[open]')].map(el=>el.dataset.id));$('#issue-results').innerHTML=found.slice(offset,offset+limit).map(i=>issue(i,openIds)).join('');$('#result-count').textContent=`${found.length} open ${found.length===1?'issue':'issues'}`;$('#empty-results').hidden=found.length>0;$('#clear-filters').hidden=!q&&!values.language&&!values.type&&!values.unassigned&&!values.source;$('#load-more').hidden=offset+limit>=found.length;$('#pagination').hidden=loaded;
-    }else{$('#project-results').innerHTML=found.slice(offset,offset+limit).map(project).join('');$('#project-count').textContent=`${found.length} ${found.length===1?'project':'projects'}`;$('#project-empty').hidden=found.length>0;$('#more-projects').hidden=offset+limit>=found.length;$('#project-pagination').hidden=loaded;}
-    status.textContent=`${found.length} ${isIssues?'issues':'projects'} found. Showing ${Math.min(limit,found.length-offset)}.`;if(writeUrl)updateUrl(values);
+  const keys=isIssues?filterKeys:['q','source','language',...repoFilterKeys,'pushDays','hasGuide','sort'];
+  const extraKeys=isIssues?advancedKeys:['pushDays','hasGuide'];
+  const defaultSort=isIssues?'updated':'name';
+  let all=page.initial,limit=page.size,offset=0,loaded=false,loading=false,timer;
+  let asOf=page.generatedAt;
+  const values=()=>Object.fromEntries(new FormData(form));
+  const active=v=>keys.filter(k=>v[k]!==undefined&&v[k]!==''&&k!=='sort');
+  function updateUrl(v){
+    const params=new URLSearchParams();
+    for(const key of keys)if(v[key]!==undefined&&v[key]!==''&&!(key==='sort'&&v[key]===defaultSort))params.set(key,v[key]);
+    history.replaceState(null,'',location.pathname+(params.size?'?'+params:''));
   }
-  function reset(){form.reset();if(isIssues)form.elements.language.value='';limit=page.size;offset=0;render();input.focus();}
-  form.addEventListener('submit',event=>{event.preventDefault();limit=page.size;offset=0;render();});
-  form.addEventListener('input',event=>{clearTimeout(timer);if(event.target.type==='search'){timer=setTimeout(()=>{limit=page.size;offset=0;render();},120);}});
-  for(const control of form.elements)control.addEventListener('change',()=>{limit=page.size;offset=0;render();});
-  if(isIssues){$('#clear-filters').addEventListener('click',reset);$('#reset-empty').addEventListener('click',reset);$('#load-more').addEventListener('click',()=>{limit+=page.size;render();});$('#retry-data').addEventListener('click',load);}else{$('#reset-projects').addEventListener('click',reset);$('#more-projects').addEventListener('click',()=>{limit+=page.size;render();});}
-  window.addEventListener('popstate',()=>{restore();limit=page.size;render({writeUrl:false});});
+  function restore(){
+    const params=new URLSearchParams(location.search);
+    for(const name of keys){
+      const field=form.elements[name];if(!field)continue;
+      const value=params.get(name);
+      if(field.type==='checkbox')field.checked=value==='on';
+      else field.value=value??(name==='language'?(page.language||''):name==='sort'?defaultSort:'');
+    }
+    const v=values();
+    if(extraKeys.some(k=>v[k]!==undefined&&v[k]!==''))$('#advanced-filters').open=true;
+  }
+  function render({writeUrl=true}={}){
+    const v=values();let found;
+    if(isIssues){
+      found=sortIssues(filterIssues(all,v,asOf),v.sort);
+      const openIds=new Set([...document.querySelectorAll('.issue[open]')].map(el=>el.dataset.id));
+      $('#issue-results').innerHTML=found.slice(offset,offset+limit).map(i=>issueMarkup(i,{base:page.base,siteOrigin:page.siteOrigin,open:openIds.has(i.id)})).join('');
+      $('#result-count').textContent=`${found.length} open ${found.length===1?'issue':'issues'}`;
+      $('#clear-filters').hidden=!active(v).length;
+      $('#empty-results').hidden=found.length>0||!loaded;
+      $('#load-more').hidden=!loaded||offset+limit>=found.length;
+      $('#pagination').hidden=loaded;
+    }else{
+      found=sortIssues(filterProjects(all,v,asOf),v.sort||defaultSort);
+      $('#project-results').innerHTML=found.slice(offset,offset+limit).map(p=>projectMarkup(p,{base:page.base,siteOrigin:page.siteOrigin})).join('');
+      $('#project-count').textContent=`${found.length} ${found.length===1?'project':'projects'}`;
+      $('#project-empty').hidden=found.length>0||!loaded;
+      $('#more-projects').hidden=!loaded||offset+limit>=found.length;
+      $('#project-pagination').hidden=loaded;
+      $('#clear-project-filters').hidden=!active(v).length;
+    }
+    const advancedCount=extraKeys.filter(k=>v[k]!==undefined&&v[k]!=='').length;
+    $('#advanced-count').textContent=advancedCount?`${advancedCount} active`:'';
+    $('#clear-repository').hidden=!repoFilterKeys.some(k=>v[k]!==undefined&&v[k]!=='');
+    const shown=Math.max(0,Math.min(limit,found.length-offset));
+    status.textContent=`${found.length} ${isIssues?'issues':'projects'} found. Showing ${shown}.${loaded?'':' Loading the full snapshot.'}`;
+    if(writeUrl)updateUrl(v);
+  }
+  function reset(){
+    form.reset();form.elements.language.value='';
+    limit=page.size;offset=0;render();input.focus();
+  }
+  form.addEventListener('submit',event=>{event.preventDefault();clearTimeout(timer);limit=page.size;offset=0;render();});
+  for(const field of form.elements){
+    field.addEventListener('input',()=>{if(['search','number'].includes(field.type)){clearTimeout(timer);timer=setTimeout(()=>{limit=page.size;offset=0;render();},120);}});
+    field.addEventListener('change',()=>{clearTimeout(timer);limit=page.size;offset=0;render();});
+  }
+  if(isIssues){
+    $('#clear-filters').addEventListener('click',reset);$('#reset-empty').addEventListener('click',reset);
+    $('#load-more').addEventListener('click',()=>{limit+=page.size;render();});$('#retry-data').addEventListener('click',load);
+  }else{
+    $('#reset-projects').addEventListener('click',reset);$('#clear-project-filters').addEventListener('click',reset);$('#more-projects').addEventListener('click',()=>{limit+=page.size;render();});$('#retry-projects').addEventListener('click',load);
+  }
+  $('#clear-repository').addEventListener('click',()=>{
+    for(const key of repoFilterKeys)form.elements[key].value='';
+    limit=page.size;offset=0;render();
+  });
+  $('#clear-advanced').addEventListener('click',()=>{
+    for(const key of extraKeys){const field=form.elements[key];if(field.type==='checkbox')field.checked=false;else field.value='';}
+    limit=page.size;offset=0;render();
+  });
+  window.addEventListener('popstate',()=>{restore();limit=page.size;offset=0;render({writeUrl:false});});
   document.addEventListener('keydown',event=>{if(event.key==='/'&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){event.preventDefault();input.focus();}});
-  async function load(){if(loading)return;loading=true;status.textContent=`Loading the ${isIssues?'issue snapshot':'project catalogue'}…`;const error=$(isIssues?'#data-error':'#project-error');error.hidden=true;try{const response=await fetch(`${page.base}/data/${isIssues?'issues':'projects'}.json`,{signal:AbortSignal.timeout(20000)});if(!response.ok)throw new Error('Snapshot unavailable');const data=await response.json();if(!Array.isArray(data.items))throw new Error('Invalid snapshot');all=data.items;loaded=true;restore();offset=page.page>1&&!location.search?(page.page-1)*page.size:0;render({writeUrl:false});}catch{error.hidden=false;status.textContent='Could not load the complete snapshot. The initial list is still available.';}finally{loading=false;}}
+  async function load(){
+    if(loading)return;loading=true;
+    const error=$(isIssues?'#data-error':'#project-error');error.hidden=true;
+    $('#snapshot-loading').hidden=false;
+    try{
+      const response=await fetch(`${page.base}/data/${isIssues?'issues':'projects'}.json`,{signal:AbortSignal.timeout(20000)});
+      if(!response.ok)throw new Error('Snapshot unavailable');
+      const data=await response.json();if(!Array.isArray(data.items))throw new Error('Invalid snapshot');
+      all=data.items;asOf=data.checkedAt||data.generatedAt;loaded=true;restore();
+      offset=page.page>1&&!location.search?(page.page-1)*page.size:0;render({writeUrl:false});
+    }catch{error.hidden=false;status.textContent='Could not load the complete snapshot. The initial list is still available.';}
+    finally{loading=false;$('#snapshot-loading').hidden=true;}
+  }
   document.documentElement.classList.add('enhanced');restore();load();
-})();
+}

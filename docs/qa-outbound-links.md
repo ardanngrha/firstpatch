@@ -1,0 +1,21 @@
+# Outbound links and portfolio entry
+
+18 October 2026. FirstPatch changes remain local and uncommitted; the portfolio entry is a separate repository change.
+
+## Scope and verification
+
+- External HTTP(S) links open a new tab using native `target="_blank"`, with `noopener noreferrer`. An accessible description announces the new tab. Relative navigation, same-origin absolute links and local downloads keep their existing behavior.
+- A shared helper applies the same policy to complete static HTML and client-rendered issue/project rows. No click interception or JavaScript popup is required. Existing relationship tokens such as `nofollow` are preserved; applying the policy twice leaves the output unchanged. Custom site origins are supported.
+- Browser verification: the About page's source-code link opened GitHub in a separate tab while the About tab remained open. The Projects navigation stayed in the existing tab. Project links after the full JSON snapshot rendered have `_blank` and `noopener noreferrer`, while the internal Projects navigation has no new-tab target.
+- After filtering Issues to Dart and opening a row, the detected-license, original-discussion, contribution-guide and View on GitHub links also all have `_blank` plus `noopener noreferrer`.
+- Build checks validate every generated external anchor, in addition to SEO and local assets: 96 HTML pages, 95 indexable pages, 28,570 local references. All passed. Existing 13 tests pass; semantic text contrast remains 5.36:1 light / 6.08:1 dark.
+- Portfolio source is `/Users/ardan/Personal/ardananugraha.com`. FirstPatch follows the existing MDX project template, appears in Selected Work and the Projects directory, and has English/Japanese detail routes with correct canonical URLs. A real screenshot of the currently published FirstPatch is exported as a 1200 × 675 WebP (57,080 bytes). No image or product claim is invented, and unpublished FirstPatch filters are not advertised as live.
+- Portfolio checks passed: Astro diagnostics for 56 files (zero errors/warnings/hints), ESLint, Prettier and a 20-page production build. The production-build preview renders the screenshot, four technology icons, project copy, and actual demo/source destinations. Both themes were inspected; the mobile document and viewport are both 390px wide with no horizontal overflow. An initial dev-preview module-load error was avoided by verifying the completed production build instead.
+- Portfolio commit `450ab0a74550a9b3e8052818790deb240429b4be` was pushed to its own repository. Cloudflare Pages deployment `308b04c7-79a3-49d6-befb-e2ca13f13b66` finished successfully for that revision. The public URL `https://ardananugraha.com/projects/firstpatch` was inspected in the browser and shows the expected screenshot, title, stack, copy and destination links. FirstPatch HEAD remains `cbf0e1b704e9dee0d598a23501e6da5536245570`; no FirstPatch push, workflow dispatch or deployment was performed.
+
+## Anti Slop delivery gate
+
+- **Hard Gate PASS:** actual GitHub new tab observed; internal navigation and dynamic-row attributes verified; all generated external anchors checked. Real existing project content, screenshot, URLs and counts only. Responsive portfolio proof has no overflow. No new decorative assets, fictional claims or unavailable actions.
+- **Purpose-Gate PASS:** native new-tab links preserve the discovery list and its filters. Opener/referrer protection and an accessible description accompany the behavior. The portfolio uses its established project template; technology logos identify the actual stack. FirstPatch retains its approved ENERGY 1 / RHYTHM 2 / MOTION 1 direction with no new visual technique.
+- **Liveliness PASS:** existing sprout/humanist FirstPatch identity and the portfolio's editorial project presentation remain intact. The real product screenshot provides project-specific content, with no new animation, palette or layout introduced.
+- **Craftsmanship and Quality Locks PASS:** one shared link policy covers HTML and later filtering; static checking guards every outgoing anchor. Same-origin, existing relationship tokens, repeated processing and custom-origin checks pass. Portfolio type/lint/format/build checks pass, with genuine copy, reused components and an optimized screenshot.

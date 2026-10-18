@@ -14,6 +14,16 @@ for(const file of htmlFiles){const html=await readFile(file,'utf8');const relati
   for(const match of html.matchAll(/(?:href|src)="(\/[^"#?]*)[^" ]*"/g)){if(!match[1].startsWith(base+'/')||match[1].startsWith('//'))continue;links++;const local=path.resolve(root,match[1].slice((base+'/').length));if(local!==root&&!local.startsWith(root+path.sep))fail('Path escaped site root');let check=local;if(match[1].endsWith('/'))check=path.join(local,'index.html');try{await stat(check);}catch{fail(`Broken internal link ${match[1]}`);}}
   for(const property of ['og:url','og:image']){const value=html.match(new RegExp(`<meta property="${property}" content="([^"]+)"`))?.[1];if(value!==(property==='og:url'?canonical:site+'/assets/firstpatch-mark.png'))fail(`Incorrect ${property}`);}
   if(/href="#"/.test(html))fail('Dead anchor');if(html.includes('Sample data'))fail('Sample data leaked into production');
+  for(const anchor of html.matchAll(/<a\b([^>]*)>/g)){
+    const attributes=anchor[1],href=attributes.match(/\bhref="([^"]*)"/)?.[1];
+    if(!href)continue;
+    const url=new URL(href,site);
+    if(['http:','https:'].includes(url.protocol)&&url.origin!==new URL(site).origin){
+      if(!/\btarget="_blank"/.test(attributes))fail('External link does not open a new tab');
+      const rel=attributes.match(/\brel="([^"]*)"/)?.[1].split(/\s+/)||[];
+      if(!rel.includes('noopener')||!rel.includes('noreferrer'))fail('External link is missing opener/referrer protection');
+    }
+  }
 }
 const siteMap=await readFile(path.join(root,'sitemap.xml'),'utf8');if((siteMap.match(/<loc>/g)||[]).length!==htmlFiles.length-1)errors.push('Sitemap does not match indexable pages');
 for(const m of siteMap.matchAll(/<loc>([^<]+)<\/loc>/g))if(!canonicalSet.has(m[1])||m[1].endsWith('/404.html'))errors.push('Invalid sitemap URL '+m[1]);

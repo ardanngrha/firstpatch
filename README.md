@@ -4,14 +4,16 @@ Find a small issue in a project you care about.
 
 **[Open FirstPatch](https://firstpatch.pages.dev/)**
 
-FirstPatch combines public open-source project directories and recently updated GitHub issues. Search by project or topic, filter by language, contribution type, discovery source and assignment, then read the issue context and project contribution guide in place.
+FirstPatch combines licensed project catalogues and checked GitHub issue metadata. Search by project or topic, filter by language, assignment, stars, forks, last code push, issue update, comments, license, labels and detected contribution guidance. Open the original issue for its full description and discussion.
 
 ## What is included
 
 - Real, checked open issues from GitHub's official API. The timestamp is shown; this is not a live availability guarantee.
 - Complete public seed catalogues from Good First Issue, First Contributions and Up For Grabs.
-- Bounded public directory snapshots from CodeTriage and GoodFirstIssue.org.
-- FirstIssue.dev and First Timers Only as explicitly labeled resources. We do not claim to import a private personalized feed or treat a guide as a database.
+- CodeTriage, GoodFirstIssue.org and FirstIssue.dev as external links only; no HTML catalogue or personalized feed is imported.
+- First Timers Only as a contribution guide; its similarly named issue label is searched independently.
+- Repository stars, forks, detected license, last push, issue dates and comment counts, with a collapsible set of additional filters and shareable filter URLs.
+- Projects show language, stars, forks, all open issues, detected license, last code push and the repository check date with labeled icons. Stars/forks minimum and maximum ranges and license filters are directly visible on both discovery pages; Projects also supports language/source, recent push, detected guidance and name/stars/forks/activity sorting.
 - Credited source membership, readable inline issue context, keyboard controls, light/dark themes and mobile reflow.
 - Pre-rendered HTML, crawlable pagination and language pages, canonical URLs, JSON-LD, metadata and a sitemap.
 - No visitor accounts, analytics, third-party font requests or API tokens in the browser.
@@ -46,7 +48,13 @@ npm run sync
 npm run build
 ```
 
-`SOURCE_PAGE_LIMIT=5` is the default bounded CodeTriage import; it can be raised to a maximum of 140. HTML imports read public repository references, not user profiles or contact information. Source parsing is validated. The First Contributions object data is parsed with JSON5, not evaluated as JavaScript.
+Imports use the three explicitly licensed catalogues. No HTML directory scraping is performed. The First Contributions object data is parsed with JSON5, not evaluated as JavaScript. GitHub issue bodies, comment text, personal profiles and locations are not fetched. Descriptions shown in the UI come from the licensed catalogues. The same data policy is applied to retained snapshots and at build time so historical snapshots cannot republish retired sources or issue excerpts.
+
+Repository metadata is refreshed independently for every GitHub directory entry, in batches of 40 using the official GraphQL API. This runs in the existing daily sync, without a visitor-side API call or a new paid service. Missing/deleted/inaccessible repositories retain previously checked metadata with its original date when available; otherwise facts remain unknown. Non-GitHub entries are labeled as external hosts. Project open-issue counts include all open issues, not only beginner tasks. Each row shows its own metadata-check date; the export records the directory refresh time separately from the issue-feed check.
+
+Extra filters use AND semantics. Date windows end at the snapshot check time; repository last push and issue last update are distinct. Missing numeric data is not zero and does not satisfy numeric filters. `NOASSERTION` is displayed as a license that was not identified. A detected SPDX identifier is not legal clearance. Root `CONTRIBUTING.md` detection does not prove the absence of contribution guidance elsewhere. Project country is not inferred from a maintainer’s public location. Stars and forks do not establish task difficulty or maintainer responsiveness.
+
+Project downloads embed their reuse notice and link to `/data/attribution.json`, which distributes original source URLs, upstream MIT notices and the CC BY-SA transformation notice. `/data/LICENSE.md` is also distributed. Issue metadata has a separate rights statement; it is not blanket-relicensed as CC BY-SA. See `docs/data-reuse-review.md` for the scoped assessment and remaining uncertainties.
 
 If a catalogue fails, its previous successful records are retained and marked. If all issue checks fail, the previous issue snapshot retains its original checked time. Partial refreshes are marked in `/data/status.json`. Scheduled deployment loads the currently published snapshot as the fallback before trying a refresh. If the first-ever issue import has no valid snapshot, sync fails instead of inventing or silently publishing issue data.
 

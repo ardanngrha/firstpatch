@@ -10,4 +10,6 @@ The combined project catalogue includes adapted descriptions, tags and project r
 
 Attribution for every project is retained in its `sources` array. Directory source definitions and public source status are published on the Sources page. Upstream MIT notices for Good First Issue and First Contributions are in `THIRD_PARTY_NOTICES.md` and `public/licenses/`.
 
-Public GitHub issue metadata and short excerpts retain their original source URL and authorship context. This repository does not claim to relicense other projects' code, issue text, names or marks. Check the original project when reusing its material. The application source code is separately MIT licensed.
+GitHub issue titles and factual metadata retain direct links to their original issues. Issue bodies and comment text are not imported or redistributed. Descriptions displayed by FirstPatch come from the licensed catalogues. The catalogue licence does not relicense GitHub issue titles, repository code, names or marks. Check the original rights and terms before reusing them. Repository SPDX detection is not a legal clearance. The application source code is separately MIT licensed.
+
+The generated project JSON includes a reuse notice linking to `/data/attribution.json`. That attribution file distributes the original catalogue links, MIT notices and transformation notice. This file is also distributed at `/data/LICENSE.md`. CodeTriage, GoodFirstIssue.org and FirstIssue.dev are external links only, with no catalogue imported or retained from them.

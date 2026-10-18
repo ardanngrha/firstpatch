@@ -17,7 +17,13 @@ An approachable contribution directory for first-time open-source contributors. 
 - One unified list: users compare tasks, so a repeated reading axis beats isolated cards.
 - Whitespace separates the search task from the results; rules separate related entries.
 - Expand details in place: preserve search context while reading the contribution requirements.
+- Start every issue collapsed and omit the repeated GitHub mark beside repository names; contributors choose what to open, while the detail action identifies the destination.
 - Source and checked time stay visible: an imported issue is a snapshot, not a live promise.
+- Stars, forks and detected license sit beneath the repository identity; issue comments sit beside the task context. Code push and issue update have explicit separate labels, avoiding an ambiguous activity score.
+- Less common filters live in a native More filters disclosure; the primary search stays compact. Active extra filters are counted, shareable in the URL, and reset independently.
+- Stars, forks and license are visible repository filters on Issues and Projects. Custom minimum/maximum counts avoid arbitrary popularity buckets; no value means no threshold. Metric icons use the existing Phosphor family to distinguish stars, forks, comments, issue counts and licenses, with visible text retained. The star denotes the actual GitHub star count, not decoration.
+- Project rows share language, stars, forks, open issue count, detected license, code push and metadata-check signals. Open issue counts explicitly include every open issue. Missing data and external hosts remain labeled; comment counts belong to individual issues.
+- Missing metadata stays visibly unknown. No country, difficulty, contribution time or maintainer response estimate is inferred from proxy data.
 - Theme choice supports different reading environments; both themes use the same hierarchy and behavior.
 - Filled action labels retain the contrasting canvas color inside prose, so article link styling cannot hide the primary action in either theme.
 - Motion is limited to state feedback, with reduced-motion support.

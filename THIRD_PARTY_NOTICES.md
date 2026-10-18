@@ -7,11 +7,11 @@ FirstPatch is not affiliated with the sources below. A listing is not an endorse
 - **Good First Issue**, DeepSource Corp. Public `data/repositories.toml`. Copyright 2020 DeepSource Corp. MIT. https://github.com/DeepSourceCorp/good-first-issue
 - **First Contributions**, Roshan Jossy and contributors. Public `src/data/projects.js`. Copyright (c) 2020 Roshan Jossy. MIT. https://github.com/firstcontributions/firstcontributions.github.io
 - **Up For Grabs**, Up-For-Grabs contributors. Published JSON derived from `_data/projects`. User content is CC BY-SA 4.0. https://github.com/up-for-grabs/up-for-grabs.net. Combined catalogue transformations are documented in `data/LICENSE.md`.
-- **CodeTriage**. Public repository references from a bounded directory snapshot. No developer profiles, contact details, or private service data imported. https://www.codetriage.com/
-- **GoodFirstIssue.org**. Repository references from one public beginner-friendly listing page. No proprietary AI assessments, paid data, or profiles copied. https://www.goodfirstissue.org/repos/beginner-friendly
+- **CodeTriage**. External discovery resource only. No HTML catalogue is imported or retained; explicit dataset reuse permission has not been established. https://www.codetriage.com/
+- **GoodFirstIssue.org**. External discovery resource only. No HTML catalogue, assessments, paid data or profiles are imported or retained. https://www.goodfirstissue.org/repos/beginner-friendly
 - **FirstIssue.dev**. External discovery resource only. Its personalized issue feed is not imported. https://www.firstissue.dev/
 - **First Timers Only**. External contribution guide. The similarly named GitHub label is queried independently. https://www.firsttimersonly.com/
-- **GitHub**. Official API metadata. Issue excerpts are attributed through direct links to the original issue. GitHub remains authoritative for issue state and availability.
+- **GitHub**. Official API issue titles and factual metadata, with direct links to original issues. No issue bodies, comments, user profiles or locations are imported. Repository descriptions shown in the UI come from the licensed catalogues. Issue content rights remain with their holders; the catalogue licence does not relicense them. GitHub remains authoritative for state and availability.
 
 The complete upstream MIT notices are distributed in `public/licenses/` and copied into the built site. The CC BY-SA legal text is linked in `data/LICENSE.md`. Source identity and timestamps are retained in the public JSON data.
 

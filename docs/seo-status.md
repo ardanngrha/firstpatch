@@ -1,5 +1,15 @@
 # Search Console setup, 18 October 2026
 
+## Release check, 18 October 2026
+
+- The owner authorized deployment of the accumulated local changes. Local verification passed: 13 tests, 96 HTML pages (95 indexable), 28,570 local references, canonical/OG/JSON-LD metadata, sitemap and all generated outbound-link attributes.
+- A fresh Search Console Overview inspection shows indexing and performance reports are still **Processing data, please check again in a day or so**.
+- A fresh URL Inspection of `https://firstpatch.pages.dev/` reports **URL is not on Google** and **Page is not indexed: URL is unknown to Google**. Last crawl is N/A; no referring sitemap or page is detected in this report. This is direct indexing evidence, not an inference from a `site:` search.
+- Indexing is the immediate issue to address before assessing first-page rankings. Ownership verification, a sitemap submission, a successful live fetch and indexing are different states. No penalty, search position, crawl date or indexing success is inferred from these reports.
+- After production verification, the release follow-up will check the live homepage and request indexing once if available. Any request acceptance remains distinct from successful indexing. The earlier sitemap warning below is historical and is not assumed resolved.
+
+## Earlier setup record
+
 - Property: `https://firstpatch.pages.dev/`, URL-prefix type.
 - Google ownership verification: **Ownership verified**, HTML file method.
 - Verification file: `public/googleadbd9664c8414571.html`, served publicly with HTTP 200 and the exact Google verification string. Keep it in future deployments.
