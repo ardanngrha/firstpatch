@@ -69,6 +69,7 @@ Supabase redirect allowlist entry. FirstPatch production and the local 4173
 callback were configured explicitly; wildcard preview callbacks are not allowed.
 
 The progress workflow is gated by FIRSTPATCH_ACCOUNTS_ENABLED=true and needs
-the repository secret FIRSTPATCH_JOB_KEY. Enable it only after the account
-frontend is released and /api/jobs/progress is verified. It does not run the
-deploy hook or publish personal data to the repository.
+the repository secret FIRSTPATCH_JOB_KEY. Both were configured after owner
+approval and production endpoint verification on 26 October 2026. The first
+workflow run passed with an empty queue. It does not run the deploy hook or
+publish personal data to the repository. Disable the variable for rollback.

@@ -19,11 +19,11 @@ FirstPatch combines licensed project catalogues and checked GitHub issue metadat
 - Optional GitHub accounts for private saved issues, shortlist status, notes, filter presets and linked pull request progress. Public browsing does not require login.
 - Account sessions use encrypted HttpOnly cookies. No localStorage or sessionStorage, visitor analytics, or third-party font requests.
 
-The account release is being reviewed locally on branch `feat/github-workspace`.
-Supabase and Cloudflare environment setup is complete, but the new frontend and
-personal-progress schedule have not been released to production. See
-`docs/account-implementation.md` and `server/README.md` for the verified state,
-limits and remaining release steps.
+The account release went live on Cloudflare Pages on 26 October 2026. GitHub-only
+login and the separate personal-progress workflow are configured. Its daily
+schedule is 00:00 WIB (17:00 UTC; GitHub may start late), and its first run passed.
+See `docs/account-implementation.md` and `server/README.md` for verification,
+privacy boundaries, free-plan limits and rollback instructions.
 
 The [Sources page](https://firstpatch.pages.dev/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 11 languages, including Dart for Flutter projects, extra batches of First Contributions and directory-listed Dart/Flutter projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
 

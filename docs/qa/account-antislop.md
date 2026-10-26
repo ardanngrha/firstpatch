@@ -28,6 +28,6 @@ alongside Product Design QA. Direction: ENERGY 1 / RHYTHM 2 / MOTION 1.
 
 Evidence: `design-qa.md`, `account-comparison.png`,
 `account-saved-fixture-mobile.png`, and `docs/account-implementation.md`.
-These gates do not assert a legal certification, exhaustive accessibility audit,
-real GitHub merge test or production release. The final release gates remain
-explicit in the implementation report.
+These gates do not assert a legal certification, exhaustive accessibility audit
+or real GitHub merge test. Production release and the first successful scheduled
+job test are documented separately in the implementation report.

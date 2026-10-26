@@ -1,6 +1,6 @@
 # Account release: implementation and verification
 
-26 October 2026. Local branch: feat/github-workspace.
+26 October 2026. Initial implementation: feat/github-workspace; released to main.
 
 ## Implemented
 
@@ -85,31 +85,46 @@ reviewed: it derives the caller from auth.uid(), fixes search_path, accepts only
 three named actions, and accesses only that caller's rate counters. Privileged
 progress RPCs have no anon/authenticated execution grants.
 
-Supabase also reports leaked-password protection disabled. The application uses
-GitHub OAuth and ownership policies require its protected provider claim.
-Disable the unused Email provider before public account rollout; do not enable
-a paid password-protection feature merely to silence the advisory.
+The pre-release Supabase advisor also reported leaked-password protection
+disabled. The unused Email provider was disabled before rollout; only GitHub
+login is enabled. This was verified both in the dashboard and Auth's public
+settings endpoint. No paid password-protection add-on was enabled.
 
-## Release gate
+## Production release
 
-The new Pages frontend is not deployed yet. Existing public production browsing
-and the daily public-catalogue workflow remain on their prior release.
+The owner approved the final release and the specific JOB_KEY transmission to
+the repository's encrypted Actions secret FIRSTPATCH_JOB_KEY. The key was
+installed without printing its value. FIRSTPATCH_ACCOUNTS_ENABLED is true.
 
-Before release:
+- Code revision: 71e1dc1d3dd8f670a609daac219f9a77d9a6cb8a.
+- Cloudflare deployment 8bfb792a-88e1-454a-9d2d-6a1ccb329cfd completed successfully
+  at 19:57 WIB on 26 October 2026.
+- [Release workflow](https://github.com/ardanngrha/firstpatch/actions/runs/40326449894)
+  passed, including tests, build, static checks and production revision/data-feed
+  matching. The legacy-link deployment also passed.
+- Production /saved/, /progress/ and /settings/ return 200 with noindex metadata;
+  /privacy/ returns indexable HTML. Anonymous /api/session returns no user, private
+  reads return 401, cross-origin writes return 403, and unauthenticated jobs
+  return 403. API responses are private/no-store and noindex/nofollow.
+- Production OAuth startup uses PKCE s256 and the exact production Supabase
+  callback. An external return URL is not forwarded as a redirect destination.
+- A valid authenticated production job returned 200, checked 0, failed 0,
+  limited false, batch limit 5. The queue is empty; no real merge is claimed.
+- [First personal-progress run](https://github.com/ardanngrha/firstpatch/actions/runs/40326987513)
+  passed and logged only: Checked 0 tracked PRs. No deploy was requested.
+  Cloudflare's latest deployment remained the release above after this run.
+- Production browser navigation to Saved completed with the expected signed-out
+  state and no console warnings/errors in that tab. Screenshots are in
+  docs/qa/account-production.png and account-production-saved.png.
 
-1. Review the local account flow and this change set.
-2. Disable the unused Supabase Email provider for GitHub-only login.
-3. Authorize storing the existing JOB_KEY as the repository Actions secret
-   FIRSTPATCH_JOB_KEY. Prior consent specifically covered Cloudflare; no
-   GitHub-secret transmission is claimed.
-4. Publish the reviewed frontend, verify auth/public discovery/API routing in
-   production, then set FIRSTPATCH_ACCOUNTS_ENABLED=true.
-5. Run the progress workflow once, confirm its bounded result, and verify no
-   deployment was triggered.
+The owner completed actual OAuth on the local origin before release. A second
+full signed-in production browser flow was not completed in this verification;
+production route/auth-start checks are not presented as that evidence. Existing
+local login cookies do not transfer to the production origin.
 
 The personal workflow is configured for 00:00 WIB (17:00 UTC), with late starts
-possible on GitHub Actions. It is currently gated off, and its secret is not yet
-installed. Cron activity does not guarantee protection from Supabase Free pauses.
+possible on GitHub Actions. Public catalogue refresh keeps its separate daily
+workflow. Cron activity does not guarantee protection from Supabase Free pauses.
 
 ## Rollback
 

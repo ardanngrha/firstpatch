@@ -44,6 +44,14 @@ their historical release; the current default issue disclosures remain closed.
 See `docs/qa/account-antislop.md` for the Delivery Gate and
 `docs/account-implementation.md` for the infrastructure and release boundary.
 
+Production follow-up: code revision 71e1dc1 was published successfully on
+26 October 2026. Signed-out Saved navigation loaded without console warnings or
+errors; production API/cache/noindex checks and the first personal-progress job
+passed. `docs/qa/account-production.png` and `account-production-saved.png` show
+the live release. Full signed-in production OAuth was not repeated in browser;
+the owner's successful local OAuth and production auth-start checks remain
+separate evidence.
+
 ## Visual truth and captures
 
 - Source: `docs/design-reference.png`, the owner-approved sans-serif revision, 1487 x 1058 pixels.
