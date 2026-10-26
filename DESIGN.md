@@ -33,3 +33,25 @@ An approachable contribution directory for first-time open-source contributors. 
 Replace sample content with real public GitHub data. Distinguish catalogue records from checked issues. Do not invent task difficulty, time estimates, summaries, star counts or source membership. A maintainer label is a signal, not a guarantee. Add native responsive reflow, accessible keyboard controls and pre-rendered content for SEO. Source directories and guides have their own accessible pages.
 
 Anti Slop during is the explicit session preference. Apply miqdadbadjuber/anti-slop together with Product Design. No global preferences or user memory were modified.
+
+## Impeccable refinement, 26 October 2026
+
+Local refinement requested by the owner; the replacement copy and layout are
+awaiting review. Discovery and account pages use Impeccable's Operate guidance:
+name the task, use direct labels and keep controls in the existing visual system.
+Read-oriented source/privacy pages retain their article layout and factual text.
+
+- Use functional page names: Saved issues, Pull request progress, Account settings
+  and Data sources. Remove the account eyebrow and repeated motivational copy.
+- Set task-page headings to 42px, 36px at intermediate widths and 30px on mobile;
+  supporting copy is 18px. Keep the approved Source Sans/Source Code families.
+- Keep stars, forks and license filters visible. Remove the redundant visible
+  repository-filter caption, retain its accessible region name, and reduce
+  spacing between filter groups. Keep the reset action available when active.
+- Use an inline sign-in section instead of a large filled card. In Saved,
+  notes/status and PR entry share a two-column editor on desktop and stack on
+  mobile. Native disclosures and their keyboard behavior remain.
+- Present partial-source status as readable inline text with its coverage link.
+  Preserve attribution, unknown-value labels, privacy and license boundaries.
+- Keep published maintainer titles, descriptions and catalogue data untouched.
+  This pass changes FirstPatch's own interface language and presentation only.

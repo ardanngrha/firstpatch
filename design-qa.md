@@ -2,6 +2,33 @@
 
 final result: passed
 
+## Impeccable refinement, 26 October 2026
+
+Latest local refinement result: passed. See
+[the audit, comparisons and interaction evidence](docs/qa/impeccable/README.md).
+
+- Visual truth: current production captures 01-saved-before.png through
+  04-sources-before.png in docs/qa/impeccable/; refined local captures have the
+  matching -after suffix. Both sides are 1280 × 720 CSS/pixel dimensions,
+  density 1, dark theme, same snapshot and interaction state. Four -comparison
+  images put each pair together; saved-copy-focus.png supplies the type/copy crop.
+- Fonts, spacing, colors, assets and copy were checked together. Typography and
+  density changes are intentional within the approved Source Sans/ivory/forest
+  identity. Public metadata, rights notices and imported source content remain.
+- Initial P2 findings were repeated account messaging, excessive discovery
+  chrome and a half-width editor layout. The final pass removes repeated slogans,
+  compacts filters and uses an explicit two-column editor wrapper, stacking at
+  320px. Source and implementation were recaptured after fixes; no actionable
+  P0/P1/P2 remains in the reviewed states.
+- Browser checks cover filter/reset, keyboard disclosure, sign-in dialog Escape
+  and focus return, local account-error recovery and isolated fixture save/note/
+  PR submission. Widths 320, 768 and 1280 were checked with no horizontal overflow.
+  Normal-flow console output was clean before the induced failure exercise.
+- Thirty-one tests, build and static SEO/link/contrast checks pass. This pass has
+  not been pushed or deployed. Real account data and infrastructure were not
+  changed. Full assistive-technology, localization and 200% zoom testing are not
+  claimed; the detailed report records scope and remaining limits.
+
 ## Account and discovery follow-up, 26 October 2026
 
 Current bounded QA result: passed. No actionable P0/P1/P2 visual finding remains
