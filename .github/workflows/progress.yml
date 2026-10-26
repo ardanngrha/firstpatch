@@ -1,0 +1,30 @@
+name: Refresh private contribution progress
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Independent of the public catalogue deployment; GitHub schedules may run late.
+    - cron: '0 17 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firstpatch-personal-progress
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: vars.FIRSTPATCH_ACCOUNTS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Refresh bounded batches without a deployment
+        env:
+          FIRSTPATCH_JOB_KEY: ${{ secrets.FIRSTPATCH_JOB_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/sync-progress.mjs

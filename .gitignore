@@ -7,3 +7,6 @@ legacy-dist/
 !.env.example
 work/
 coverage/
+.dev.vars
+.dev.vars.*
+.wrangler/

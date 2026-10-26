@@ -1,8 +1,8 @@
 // Shared by pre-rendered HTML and browser filtering; no visitor API calls.
 import {externalLinks} from './links.mjs';
-export const filterKeys=['q','language','type','unassigned','source','minStars','maxStars','minForks','maxForks','pushDays','issueDays','maxComments','license','label','hasGuide','sort'];
+export const filterKeys=['q','language','type','unassigned','source','minStars','maxStars','minForks','maxForks','pushDays','issueDays','maxComments','license','label','hasGuide','tag','onePerRepo','sort'];
 export const repoFilterKeys=['minStars','maxStars','minForks','maxForks','license'];
-export const advancedKeys=['pushDays','issueDays','maxComments','label','hasGuide'];
+export const advancedKeys=['pushDays','issueDays','maxComments','label','hasGuide','tag','onePerRepo'];
 const names={'good-first-issue':'Good First Issue','first-contributions':'First Contributions','up-for-grabs':'Up For Grabs','first-timers-only':'First Timers Only','github':'GitHub'};
 const esc=(v='')=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safe=value=>{try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)?u.href:'';}catch{return '';}};
@@ -28,7 +28,7 @@ export function filterIssues(items,values={},asOf){
     const licence=licenseId(i);
     const searchable=[i.title,i.repo,i.repoDescription,i.language,licence,...i.labels].join(' ').toLowerCase();
     return (!q||searchable.includes(q))&&(!values.language||i.language===values.language)&&
-      (!values.type||i.type===values.type)&&(!values.source||i.sources.includes(values.source))&&
+      (!values.tag||(i.tags||[]).some(t=>t.toLowerCase()===values.tag.toLowerCase()))&&(!values.type||i.type===values.type)&&(!values.source||i.sources.includes(values.source))&&
       (!values.unassigned||i.assignees===0)&&(!values.hasGuide||i.hasContributing===true)&&
       (!values.label||i.labels.some(l=>l.toLowerCase()===values.label.toLowerCase()))&&
       (!values.license||(values.license==='identified'?!!licence:values.license==='unknown'?!licence:licence===values.license))&&
@@ -42,12 +42,13 @@ export function filterProjects(items,values={},asOf){
   return items.filter(p=>{
     const licence=licenseId(p);
     return (!q||[p.repo,p.name,p.description,p.language,licence,...(p.tags||[])].join(' ').toLowerCase().includes(q))&&
-      (!values.language||p.language===values.language)&&(!values.source||p.sources.includes(values.source))&&
+      (!values.tag||(p.tags||[]).some(t=>t.toLowerCase()===values.tag.toLowerCase()))&&(!values.language||p.language===values.language)&&(!values.source||p.sources.includes(values.source))&&
       (!values.license||(values.license==='identified'?!!licence:values.license==='unknown'?!licence:licence===values.license))&&
       (!values.hasGuide||p.hasContributing===true)&&threshold(p.stars,values.minStars)&&threshold(p.stars,values.maxStars,true)&&
       threshold(p.forks,values.minForks)&&threshold(p.forks,values.maxForks,true)&&within(p.repoPushedAt,values.pushDays,asOf);
   });
 }
+export function diversifyIssues(items){const seen=new Set();return items.filter(i=>{const key=i.repo.toLowerCase();if(seen.has(key))return false;seen.add(key);return true;});}
 export function sortIssues(items,sort='updated'){
   const stamp=v=>Number.isFinite(Date.parse(v))?Date.parse(v):-Infinity;
   return [...items].sort((a,b)=>{
@@ -91,7 +92,7 @@ export function issueMarkup(i,{base='',open=false,siteOrigin='https://firstpatch
       <section><h3>Before you start</h3><ul><li>${i.assignees?'This issue has an assignee. Check with the maintainer before starting.':'No assignee at the last check. Read the comments for work already in progress.'}</li>
         <li><a href="${esc(safe(i.contributingUrl))}">Read the project’s contribution guidance</a></li>
         <li>Stars and recent pushes describe the repository, not task difficulty or maintainer response time.</li></ul></section>
-      <a class="button primary" href="${esc(safe(i.url))}">${icon('github-logo')}View on GitHub ${icon('arrow-up-right')}</a>
+      <div class="issue-actions"><button type="button" class="button secondary save-issue" data-save-issue="${esc(i.id)}" aria-pressed="false" hidden><img class="icon" src="${esc(base)}/assets/icons/bookmark-simple.svg" width="18" height="18" alt="" aria-hidden="true"><span>Save issue</span></button><a class="button primary" href="${esc(safe(i.url))}">${icon('github-logo')}View on GitHub ${icon('arrow-up-right')}</a></div>
     </div>
   </details>`,siteOrigin);
 }

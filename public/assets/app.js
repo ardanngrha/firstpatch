@@ -1,4 +1,4 @@
-import {issueMarkup,projectMarkup,filterIssues,filterProjects,sortIssues,filterKeys,repoFilterKeys,advancedKeys} from './issues.mjs';
+import {issueMarkup,projectMarkup,filterIssues,filterProjects,sortIssues,diversifyIssues,filterKeys,repoFilterKeys,advancedKeys} from './issues.mjs';
 
 const $=selector=>document.querySelector(selector);
 const themeButton=$('.theme-button');
@@ -9,7 +9,9 @@ function setTheme(dark){
   const img=themeButton.querySelector('img');img.src=img.src.replace(/(moon|sun)\.svg/,`${dark?'sun':'moon'}.svg`);
 }
 setTheme(document.documentElement.dataset.theme==='dark');themeButton.hidden=false;
-themeButton.addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';setTheme(dark);try{localStorage.setItem('firstpatch-theme',dark?'dark':'light');}catch{}});
+document.addEventListener('firstpatch-theme',event=>setTheme(event.detail));
+themeButton.addEventListener('click',()=>{const dark=document.documentElement.dataset.theme!=='dark';setTheme(dark);try{document.cookie=`fp-theme=${dark?'dark':'light'}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol==='https:'?'; Secure':''}`;}catch{}});
+themeButton.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('firstpatch-theme-choice',{detail:document.documentElement.dataset.theme})));
 
 const pageNode=$('#page-data');
 if(pageNode){
@@ -18,8 +20,8 @@ if(pageNode){
   const form=$(isIssues?'#issue-filters':'#project-filters');
   const input=form.elements.q;
   const status=$(isIssues?'#filter-status':'#project-status');
-  const keys=isIssues?filterKeys:['q','source','language',...repoFilterKeys,'pushDays','hasGuide','sort'];
-  const extraKeys=isIssues?advancedKeys:['pushDays','hasGuide'];
+  const keys=isIssues?filterKeys:['q','source','language',...repoFilterKeys,'pushDays','hasGuide','tag','sort'];
+  const extraKeys=isIssues?advancedKeys:['pushDays','hasGuide','tag'];
   const defaultSort=isIssues?'updated':'name';
   let all=page.initial,limit=page.size,offset=0,loaded=false,loading=false,timer;
   let asOf=page.generatedAt;
@@ -44,7 +46,7 @@ if(pageNode){
   function render({writeUrl=true}={}){
     const v=values();let found;
     if(isIssues){
-      found=sortIssues(filterIssues(all,v,asOf),v.sort);
+      found=sortIssues(filterIssues(all,v,asOf),v.sort);if(v.onePerRepo)found=diversifyIssues(found);
       const openIds=new Set([...document.querySelectorAll('.issue[open]')].map(el=>el.dataset.id));
       $('#issue-results').innerHTML=found.slice(offset,offset+limit).map(i=>issueMarkup(i,{base:page.base,siteOrigin:page.siteOrigin,open:openIds.has(i.id)})).join('');
       $('#result-count').textContent=`${found.length} open ${found.length===1?'issue':'issues'}`;
@@ -67,6 +69,7 @@ if(pageNode){
     const shown=Math.max(0,Math.min(limit,found.length-offset));
     status.textContent=`${found.length} ${isIssues?'issues':'projects'} found. Showing ${shown}.${loaded?'':' Loading the full snapshot.'}`;
     if(writeUrl)updateUrl(v);
+    document.dispatchEvent(new Event('firstpatch-results'));
   }
   function reset(){
     form.reset();form.elements.language.value='';

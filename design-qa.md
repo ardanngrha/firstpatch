@@ -2,6 +2,48 @@
 
 final result: passed
 
+## Account and discovery follow-up, 26 October 2026
+
+Current bounded QA result: passed. No actionable P0/P1/P2 visual finding remains
+in the reviewed account and discovery states. Earlier captures below describe
+their historical release; the current default issue disclosures remain closed.
+
+- Visual truth: the existing approved DESIGN.md and production appearance.
+  `docs/qa/account-baseline.png` and `account-desktop.png` compare at 1144 × 814
+  CSS pixels, density 1, light theme. `account-comparison.png` puts both frames
+  side by side; `account-header-comparison.png` checks the typography/header.
+  A fresh density-1 tab replaced an older zoomed tab before comparison.
+- Fonts, spacing, colors, assets and copy: Source Sans 3/Source Code Pro, ivory
+  canvas, forest-green controls, sprout and Phosphor assets are retained. New
+  workspace navigation, framework filter, presets and snapshot notice are
+  intentional product additions. Actual snapshot counts and titles differ from
+  the production reference. There is no new ornamental asset or animation.
+- Mobile: guest Saved and the signed-in fixture were checked at 320 × 900.
+  Document scroll width equals 320. Navigation links initially inherited a
+  40px height; the final override now gives every visible navigation link and
+  theme button at least 44 × 44px. The final signed-in capture is
+  `docs/qa/account-saved-fixture-mobile.png`, taken from scroll position zero
+  after checking the expanded note/status/PR form in dark mode.
+- Account UI exercises used an explicitly labeled, isolated in-memory fixture:
+  save, status and note persistence after reload, PR link/unlink and distinct
+  counts, search-preset add/remove, appearance persistence and JSON export.
+  An induced account-request failure displayed recovery copy and a retry
+  control; unblocking and retrying recovered. No normal-flow console errors
+  were observed before the deliberately induced failure.
+- Real infrastructure evidence is separate: the owner completed GitHub OAuth;
+  the Auth and preferences records were confirmed. Live transaction tests
+  verified two-user isolation and mutation boundaries, then rolled back their
+  fixtures. No fabricated PR was attached to the owner's account, and that
+  account was not deleted as a test.
+- Final automated evidence: 31 Node tests, Functions compilation, 113 generated
+  HTML pages / 108 indexable pages and 34,939 local links/assets passed.
+  Minimum semantic text contrast is 5.36:1 light and 6.08:1 dark. Private pages
+  are noindex and excluded from the sitemap. This is bounded QA, not exhaustive
+  assistive-technology, cross-device or production-auth certification.
+
+See `docs/qa/account-antislop.md` for the Delivery Gate and
+`docs/account-implementation.md` for the infrastructure and release boundary.
+
 ## Visual truth and captures
 
 - Source: `docs/design-reference.png`, the owner-approved sans-serif revision, 1487 x 1058 pixels.

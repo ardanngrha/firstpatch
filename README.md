@@ -16,7 +16,14 @@ FirstPatch combines licensed project catalogues and checked GitHub issue metadat
 - Projects show language, stars, forks, all open issues, detected license, last code push and the repository check date with labeled icons. Stars/forks minimum and maximum ranges and license filters are directly visible on both discovery pages; Projects also supports language/source, recent push, detected guidance and name/stars/forks/activity sorting.
 - Credited source membership, readable inline issue context, keyboard controls, light/dark themes and mobile reflow.
 - Pre-rendered HTML, crawlable pagination and language pages, canonical URLs, JSON-LD, metadata and a sitemap.
-- No visitor accounts, analytics, third-party font requests or API tokens in the browser.
+- Optional GitHub accounts for private saved issues, shortlist status, notes, filter presets and linked pull request progress. Public browsing does not require login.
+- Account sessions use encrypted HttpOnly cookies. No localStorage or sessionStorage, visitor analytics, or third-party font requests.
+
+The account release is being reviewed locally on branch `feat/github-workspace`.
+Supabase and Cloudflare environment setup is complete, but the new frontend and
+personal-progress schedule have not been released to production. See
+`docs/account-implementation.md` and `server/README.md` for the verified state,
+limits and remaining release steps.
 
 The [Sources page](https://firstpatch.pages.dev/sources/) and `data/catalog.json` document the exact coverage. Issue discovery samples up to 100 recent good-first issues for each of 11 languages, including Dart for Flutter projects, extra batches of First Contributions and directory-listed Dart/Flutter projects, and up to 100 `first-timers-only` issues. Only projects in the imported directories or issues explicitly carrying `first-timers-only` enter the feed. It does not claim to mirror all issues in the catalogued repositories. Labels indicate maintainer intent, not measured difficulty.
 
@@ -38,6 +45,17 @@ npm run check
 ```
 
 The build emits a self-contained static site in `dist/`. The frontend uses native HTML and a small progressive-enhancement script. The content, native issue disclosures and pagination remain usable without JavaScript. Cloudflare Pages serves the production application.
+
+Account API routes are in `functions/`, with the shared handler in `server/`.
+For local accounts, configure `.dev.vars` from `.env.example`; the local preview
+serves those routes as well as static pages. Account pages require JavaScript and
+are excluded from indexing and the sitemap. Only identifiers are requested for
+save indicators while browsing public pages, rather than loading private notes.
+
+To exercise private UI states without credentials or real user data, run
+`node tests/ui-preview.mjs` after building. The separate port 4184 fixture server
+labels simulated account/PR data, keeps everything in memory, and never contacts
+Supabase or GitHub. It is a QA harness, not the user-facing preview.
 
 ## Refresh the public data
 
